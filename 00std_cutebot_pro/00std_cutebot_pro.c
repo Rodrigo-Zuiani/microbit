@@ -121,30 +121,61 @@ void i2c_send(uint8_t* buf, uint8_t buflen) {
     NRF_TWI0->TASKS_STOP     = 1;
 }
 
+void wait(void) {
+    volatile uint32_t a;
+    for (a=0; a<4000000;a++);
+}
+
+void wait2(void) {
+    volatile uint32_t a;
+    for (a=0; a<2000000;a++);
+}
+
 int main(void) {
     
     i2c_init();
 
+    // forward blue
+    i2c_send(I2CBUF_LED_LEFT_BLUE,     sizeof(I2CBUF_LED_LEFT_BLUE));
+    i2c_send(I2CBUF_LED_RIGHT_BLUE,    sizeof(I2CBUF_LED_RIGHT_BLUE));
     // motor left
     i2c_send(I2CBUF_MOTOR_LEFT_FWD,    sizeof(I2CBUF_MOTOR_LEFT_FWD));
-    i2c_send(I2CBUF_MOTOR_LEFT_BACK,   sizeof(I2CBUF_MOTOR_LEFT_BACK));
-    i2c_send(I2CBUF_MOTORS_STOP,       sizeof(I2CBUF_MOTORS_STOP));
+    //i2c_send(I2CBUF_MOTOR_LEFT_BACK,   sizeof(I2CBUF_MOTOR_LEFT_BACK));
     // motor right
     i2c_send(I2CBUF_MOTOR_RIGHT_FWD,   sizeof(I2CBUF_MOTOR_RIGHT_FWD));
-    i2c_send(I2CBUF_MOTOR_RIGHT_BACK,  sizeof(I2CBUF_MOTOR_RIGHT_BACK));
+    //i2c_send(I2CBUF_MOTOR_RIGHT_BACK,  sizeof(I2CBUF_MOTOR_RIGHT_BACK));
+
+    wait();
+    
+    // motors stop
     i2c_send(I2CBUF_MOTORS_STOP,       sizeof(I2CBUF_MOTORS_STOP));
-    // led left
-    i2c_send(I2CBUF_LED_LEFT_WHITE,    sizeof(I2CBUF_LED_LEFT_WHITE));
+    // stop white
+    i2c_send(I2CBUF_LED_LEFT_WHITE,      sizeof(I2CBUF_LED_LEFT_WHITE));
+    wait2();
+    i2c_send(I2CBUF_LED_LEFT_GREEN,      sizeof(I2CBUF_LED_LEFT_GREEN));
+    wait2();
+    i2c_send(I2CBUF_LED_LEFT_WHITE,      sizeof(I2CBUF_LED_LEFT_WHITE));
+    wait2();
+    i2c_send(I2CBUF_LED_LEFT_GREEN,      sizeof(I2CBUF_LED_LEFT_GREEN));
+    wait2();
+    i2c_send(I2CBUF_LED_RIGHT_WHITE,     sizeof(I2CBUF_LED_RIGHT_WHITE));
+    wait();
+
+    // backward red
     i2c_send(I2CBUF_LED_LEFT_RED,      sizeof(I2CBUF_LED_LEFT_RED));
-    i2c_send(I2CBUF_LED_LEFT_GREEN,    sizeof(I2CBUF_LED_LEFT_GREEN));
-    i2c_send(I2CBUF_LED_LEFT_BLUE,     sizeof(I2CBUF_LED_LEFT_BLUE));
-    i2c_send(I2CBUF_LED_LEFT_OFF,      sizeof(I2CBUF_LED_LEFT_OFF));
-    // led right
-    i2c_send(I2CBUF_LED_RIGHT_WHITE,   sizeof(I2CBUF_LED_RIGHT_WHITE));
     i2c_send(I2CBUF_LED_RIGHT_RED,     sizeof(I2CBUF_LED_RIGHT_RED));
-    i2c_send(I2CBUF_LED_RIGHT_GREEN,   sizeof(I2CBUF_LED_RIGHT_GREEN));
-    i2c_send(I2CBUF_LED_RIGHT_BLUE,    sizeof(I2CBUF_LED_RIGHT_BLUE));
-    i2c_send(I2CBUF_LED_RIGHT_OFF,     sizeof(I2CBUF_LED_RIGHT_OFF));
+    // motor left
+    i2c_send(I2CBUF_MOTOR_LEFT_BACK,   sizeof(I2CBUF_MOTOR_LEFT_BACK));
+    // motor right
+    i2c_send(I2CBUF_MOTOR_RIGHT_BACK,  sizeof(I2CBUF_MOTOR_RIGHT_BACK));
+
+    wait();
+    
+    // stop white
+    i2c_send(I2CBUF_LED_LEFT_WHITE,      sizeof(I2CBUF_LED_LEFT_WHITE));
+    i2c_send(I2CBUF_LED_RIGHT_WHITE,     sizeof(I2CBUF_LED_RIGHT_WHITE));
+    // motors stop
+    i2c_send(I2CBUF_MOTORS_STOP,       sizeof(I2CBUF_MOTORS_STOP));
 
     while(1);
 }
